@@ -1,6 +1,6 @@
-board = [["o","o","x"],
-         ["o","x","o"],
-         ["x","",""]]
+board = [["","",""],
+         ["","",""],
+         ["","",""]]
 
 heuristic = [[2,1,2],
             [1,3,1],
@@ -70,11 +70,9 @@ def check3s(xo):
                 
         if col == 2:        
             return [misx, misy] 
-        
-
 
         elif row == 3 or col == 3 or angela == 3 or angelb == 3:
-            return xo+" wins!"
+            return ["over", -1]
 
     if angela == 2:
         print("a")
@@ -83,15 +81,16 @@ def check3s(xo):
     if angelb == 2:
         print("b")
         return [misxb, misyb]        
+    return ["going", -2]
 
-def human_move():
+def human_move(xo):
     x = input("what is x: ")
     y = input("what is y: ")
     x = int(x)
     y = int(y)
     calc_heuristic(x,y,1)
 
-    board[y][x] = "x"
+    board[y][x] = xo
 
 def computer_move():
     x = 1
@@ -162,9 +161,45 @@ def print_array(ar):
     for ii in range(len(ar[0])):
         print ar[ii]
 
+
+
+tokens = ["o", "x"]
+player = 0
+human_p = 1
+
+def computer_move(player):
+    me = check3s(tokens[player])
+    op = check3s(tokens[(player+1)%2])
+    if (me[1] > 0):
+        mvs = me
+    elif (op[1] > 0):
+        mvs = op
+    else:
+        maxer = 0
+        for jj in range(len(heuristic)):
+            for ii in range(len(heuristic[jj])):
+                if heuristic[jj][ii] > maxer:
+                    xy = [ii,jj]
+                    maxer = heuristic[jj][ii]
+        mvs = xy
+                    
+    
+        print("max heuristic value " + str(maxer) + " at " + str(xy))
+    board[mvs[1]][mvs[0]] = tokens[player]
+    calc_heuristic(mvs[0],mvs[1], 1)
+
 print(check3s("x"))
 s=1
 while s < 9:
-    print_array(heuristic)
-    human_move()
+    player = (player+1)%2
+    print(tokens[player])
+    print_array(board)
+    #print_array(heuristic)
+    if player == human_p:
+        human_move(tokens[player])
+    else: 
+        computer_move(player)
     s += 1
+while(1):
+    x=1
+
